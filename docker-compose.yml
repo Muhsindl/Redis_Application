@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  # Redis Server
+  redis-server:
+    image: redis:7.2-alpine   # Stable Redis version
+    container_name: redis-service
+    restart: always
+
+    ports:
+      - "6379:6379"  # Redis default port
+
+    volumes:
+      - redis-data:/data  # Named volume for persistence
+
+    command: ["redis-server", "--appendonly", "yes"]  # Enable AOF persistence
+
+  # RedisInsight UI
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: redis-insight
+    restart: always
+
+    ports:
+      - "5540:5540"  # RedisInsight web UI
+
+    depends_on:
+      - redis-server  # Start after Redis
+
+#  Docker named volume
+volumes:
+  redis-data:
